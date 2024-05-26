@@ -50,7 +50,7 @@ systemprompt = os.environ.get('SYSTEMPROMPT', prompt.system_prompt.format(LANGUA
 claude_systemprompt = os.environ.get('SYSTEMPROMPT', prompt.claude_system_prompt.format(LANGUAGE))
 
 class UserConfig:
-    def __init__(self, user_id: str = None, language="English", engine="gpt-4o", mode="global"):
+    def __init__(self, user_id: str = None, language="Việt Nam", engine="gpt-4o", mode="global"):
         self.user_id = user_id
         self.language = language
         self.engine = engine
