@@ -58,7 +58,7 @@ class SpecificStringFilter(logging.Filter):
     def filter(self, record):
         return self.specific_string not in record.getMessage()
 
-specific_string = "httpx.RemoteProtocolError: Server disconnected without sending a response."
+specific_string = "httpx.RemoteProtocolError: Không thể kết nối đến Server ngay lúc này."
 my_filter = SpecificStringFilter(specific_string)
 
 update_logger = logging.getLogger("telegram.ext.Updater")
@@ -116,7 +116,7 @@ WAIT_INTERVAL = 0.5
 @decorators.GroupAuthorization
 @decorators.Authorization
 async def command_bot(update, context, language=None, prompt=translator_prompt, title="", robot=None, has_command=True):
-    print("update", update)
+    print("Cập nhật", update)
     image_url = None
     if update.edited_message:
         message, rawtext, image_url, chatid, messageid, reply_to_message_text = await GetMesage(update.edited_message, context)
@@ -132,7 +132,7 @@ async def command_bot(update, context, language=None, prompt=translator_prompt, 
             message = ' '.join(context.args)
         if prompt and has_command:
             if translator_prompt == prompt:
-                if language == "english":
+                if language == "Việt Nam":
                     prompt = prompt.format(language)
                 else:
                     prompt = translator_en2zh_prompt
@@ -170,7 +170,7 @@ async def command_bot(update, context, language=None, prompt=translator_prompt, 
     else:
         message = await context.bot.send_message(
             chat_id=chatid,
-            text="请在命令后面放入文本。",
+            text="Vui lòng đặt văn bản sau lệnh。",
             parse_mode='MarkdownV2',
             reply_to_message_id=messageid,
         )
@@ -186,7 +186,7 @@ async def reset_chat(update, context):
     remove_keyboard = ReplyKeyboardRemove()
     await context.bot.send_message(
         chat_id=update.message.chat_id,
-        text="重置成功！",
+        text="Đặt lại thành công！",
         reply_markup=remove_keyboard,
     )
 
@@ -244,20 +244,13 @@ async def getChatGPT(update, context, title, robot, message, chatid, messageid):
         tmpresult = f"{tmpresult}\n\n`{e}`"
     print(tmpresult)
     if lastresult != tmpresult and answer_messageid:
-        if "Can't parse entities: can't find end of code entity at byte offset" in tmpresult:
+        if "Không thể phân tích cú pháp các thực thể: không thể tìm thấy phần cuối của thực thể mã ở độ lệch byte trong tmpresult:"
             # await context.bot.edit_message_text(chat_id=chatid, message_id=messageid, text=tmpresult, disable_web_page_preview=True, read_timeout=time_out, write_timeout=time_out, pool_timeout=time_out, connect_timeout=time_out)
             await update.message.reply_text(tmpresult)
             print(escape(tmpresult))
         else:
             sent_message = await context.bot.edit_message_text(chat_id=chatid, message_id=answer_messageid, text=escape(tmpresult), parse_mode='MarkdownV2', disable_web_page_preview=True, read_timeout=time_out, write_timeout=time_out, pool_timeout=time_out, connect_timeout=time_out)
     if PREFERENCES["FOLLOW_UP"]:
-        prompt = (
-            f"You are a professional Q&A expert. You will now be given reference information. Based on the reference information, please help me ask three most relevant questions that you most want to know from my perspective. Be concise and to the point. Do not have numbers in front of questions. Separate each question with a line break. Only output three questions in {config.LANGUAGE}, no need for any explanation. reference infomation is provided inside <infomation></infomation> XML tags."
-            "Here is the reference infomation, inside <infomation></infomation> XML tags:"
-            "<infomation>"
-            "{}"
-            "</infomation>"
-        ).format("\n\n".join(tmpresult.split("\n\n")[1:]))
         result = config.SummaryBot.ask(prompt, convo_id=str(chatid), pass_history=False).split('\n')
         keyboard = []
         result = [i for i in result if i.strip() and len(i) > 5]
@@ -399,7 +392,7 @@ async def handle_pdf(update, context):
     if config.CLAUDE_API and "claude-3" in engine:
         robot.add_to_conversation(claude3_doc_assistant_prompt, "assistant", str(update.effective_chat.id))
     message = (
-        f"文档上传成功！\n\n"
+        f"Tài liệu được tải lên thành công! \n\n"
     )
     await context.bot.send_message(chat_id=update.message.chat_id, text=escape(message), parse_mode='MarkdownV2', disable_web_page_preview=True)
 
@@ -453,7 +446,7 @@ async def inlinequery(update: Update, context) -> None:
     query = update.inline_query.query
     # 调用 getChatGPT 函数获取结果
     if (query.endswith(';') or query.endswith('；')) and query.strip():
-        prompt = "Answer the following questions as concisely as possible:\n\n"
+        prompt = "Trả lời các câu hỏi sau đây một cách ngắn gọn nhất có thể và chính xác nhất có thể:\n\n"
         result = config.ChatGPTbot.ask(prompt + query, convo_id=str(chatid), pass_history=False)
 
         results = [
@@ -470,7 +463,7 @@ async def inlinequery(update: Update, context) -> None:
 async def start(update, context): # 当用户输入/start时，返回文本
     user = update.effective_user
     message = (
-        f"Hi `{user.username}` ! I am an Assistant, a large language model trained by OpenAI. I will do my best to help answer your questions.\n\n"
+        f"Xin chào `{user.username}` ! Tớ là ChatGPT, mô hình ngôn ngữ lớn được huấn luyện bởi VinZ và OpenAI, tớ có thể viết văn, giải toán, và nhiều hơn thế nữa. Bạn cần tớ giúp gì nào.\n\n"
         # "我是人见人爱的 ChatGPT~\n\n"
         # "欢迎访问 https://github.com/yym68686/ChatGPT-Telegram-Bot 查看源码\n\n"
         # "有 bug 可以联系 @yym68686"
@@ -483,7 +476,7 @@ async def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
     traceback_string = traceback.format_exception(None, context.error, context.error.__traceback__)
     logger.warning('Error traceback: %s', ''.join(traceback_string))
-    # await update.message.reply_text(escape("出错啦！请重试。"), parse_mode='MarkdownV2', disable_web_page_preview=True)
+    # await update.message.reply_text(escape("Đã xảy ra lỗi! Vui lòng thử lại."), parse_mode='MarkdownV2', disable_web_page_preview=True)
 
 @decorators.GroupAuthorization
 @decorators.Authorization
@@ -493,12 +486,11 @@ async def unknown(update, context): # 当用户输入未知命令时，返回文
 
 async def post_init(application: Application) -> None:
     await application.bot.set_my_commands([
-        BotCommand('info', 'basic information'),
-        BotCommand('reset', 'Reset the bot'),
-        BotCommand('en2zh', 'translate to Chinese'),
-        BotCommand('zh2en', 'translate to English'),
-        BotCommand('search', 'search Google or duckduckgo'),
-        BotCommand('start', 'Start the bot'),
+        BotCommand('info', 'Thông tin cơ bản của bot'),
+        BotCommand('reset', 'Khởi động lại bot'),
+        BotCommand('zh2en', 'Dịch sang tiếng Anh'),
+        BotCommand('search', 'Tìm kiếm trên Google hoặc DuckDuckGo'),
+        BotCommand('start', 'Chạy bot'),
     ])
 
 from http.server import BaseHTTPRequestHandler
