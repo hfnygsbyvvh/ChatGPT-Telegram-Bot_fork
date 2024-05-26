@@ -7,9 +7,9 @@ def Authorization(func):
             return await func(*args, **kwargs)
         if (args[0].effective_user.id not in config.whitelist):
             message = (
-                f"`Hi, {args[0].effective_user.username}!`\n\n"
+                f"`Xin chào, {args[0].effective_user.username}!`\n\n"
                 f"id: `{args[0].effective_user.id}`\n\n"
-                f"无权访问！\n\n"
+                f"Không truy cập！\n\n"
             )
             await args[1].bot.send_message(chat_id=args[0].effective_user.id, text=message, parse_mode='MarkdownV2')
             return
@@ -25,9 +25,9 @@ def GroupAuthorization(func):
             if (args[0].effective_user.id in config.ADMIN_LIST and config.ADMIN_LIST):
                 return await func(*args, **kwargs)
             message = (
-                f"`Hi, {args[0].effective_user.username}!`\n\n"
+                f"`Xin chào, {args[0].effective_user.username}!`\n\n"
                 f"id: `{args[0].effective_user.id}`\n\n"
-                f"无权访问！\n\n"
+                f"Không truy cập！\n\n"
             )
             await args[1].bot.send_message(chat_id=args[0].effective_chat.id, text=message, parse_mode='MarkdownV2')
             return
