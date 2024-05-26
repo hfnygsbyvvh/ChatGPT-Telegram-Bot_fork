@@ -1,1 +1,1 @@
-FROM yym68686/chatgpt:1.0
+FROM vinzcyun/chatgpt:1.0
